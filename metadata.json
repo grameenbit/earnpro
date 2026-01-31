@@ -1,0 +1,5 @@
+{
+  "name": "Earn Pro BD",
+  "description": "A reward-based application allowing users to earn points via ads, spins, and tasks, featuring Firebase authentication and wallet management.",
+  "requestFramePermissions": []
+}
