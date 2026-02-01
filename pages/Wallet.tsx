@@ -111,46 +111,44 @@ const Wallet: React.FC<WalletProps> = ({ user, config }) => {
                     value={amount} 
                     onChange={(e) => setAmount(e.target.value)} 
                     placeholder="Amount ($)" 
-                    className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none text-sm"
+                    className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none transition focus:ring-2 focus:ring-indigo-500" 
                 />
                 <input 
                     type="text" 
                     value={number} 
                     onChange={(e) => setNumber(e.target.value)} 
-                    placeholder="Account Number / Mobile Number" 
-                    className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none text-sm"
+                    placeholder="Account Number / ID" 
+                    className="w-full p-3 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none transition focus:ring-2 focus:ring-indigo-500" 
                 />
-                <p className="text-[10px] text-red-500 font-bold text-center">Minimum Withdraw: ${config.minWithdraw}</p>
-                <button onClick={handleWithdraw} className="w-full bg-green-500 text-white py-3 rounded-xl font-bold mt-2 shadow-lg shadow-green-500/30 hover:bg-green-600 transition">
-                    Withdraw Now
+                <button onClick={handleWithdraw} className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition">
+                    Withdraw
                 </button>
             </div>
         </div>
 
         {/* History */}
         <div>
-            <h3 className="font-bold text-gray-800 dark:text-white mb-3"><i className="fas fa-history text-gray-400 mr-2"></i>Payment History</h3>
-            <div className="space-y-3 pb-4">
-                {loadingHistory && <div className="text-center text-gray-400 text-xs py-4 animate-pulse">Loading history...</div>}
-                {!loadingHistory && history.length === 0 && <div className="text-center text-gray-400 text-xs py-4">No transactions yet</div>}
+            <h3 className="font-bold text-gray-800 dark:text-white mb-3">Recent Withdrawals</h3>
+            <div className="space-y-2">
+                {loadingHistory && <div className="text-center text-xs text-gray-400 py-4">Loading history...</div>}
+                {!loadingHistory && history.length === 0 && <div className="text-center text-xs text-gray-400 py-4">No withdrawals yet</div>}
                 
-                {history.map((w, i) => {
-                    let statusColor = "bg-yellow-100 text-yellow-700";
-                    let statusText = "Pending";
-                    if (w.status === 'approved') { statusColor = "bg-green-100 text-green-700"; statusText = "Approved"; }
-                    if (w.status === 'rejected') { statusColor = "bg-red-100 text-red-700"; statusText = "Rejected"; }
-                    const dateStr = w.date?.seconds ? new Date(w.date.seconds * 1000).toLocaleDateString() : 'Just now';
+                {history.map((item, index) => {
+                    // Normalize status for display (Case Insensitive Check)
+                    const status = item.status ? item.status.toLowerCase() : 'pending';
+                    let statusColor = 'bg-yellow-100 text-yellow-600';
+                    if (status === 'approved') statusColor = 'bg-green-100 text-green-600';
+                    if (status === 'rejected') statusColor = 'bg-red-100 text-red-600';
 
                     return (
-                        <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-3 flex justify-between items-center shadow-sm">
+                        <div key={item.id || index} className="bg-white dark:bg-gray-800 p-3 rounded-xl flex justify-between items-center shadow-sm">
                             <div>
-                                <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{w.method}</p>
-                                <p className="text-[10px] text-gray-500">{dateStr}</p>
+                                <p className="font-bold text-sm text-gray-800 dark:text-gray-200">{item.method} - ${item.amount}</p>
+                                <p className="text-[10px] text-gray-400">{item.date ? new Date(item.date.seconds * 1000).toLocaleDateString() : 'Date N/A'}</p>
                             </div>
-                            <div className="text-right">
-                                <p className="text-sm font-bold text-gray-800 dark:text-gray-200">-${w.amount}</p>
-                                <span className={`text-[9px] px-2 py-0.5 rounded-full ${statusColor} font-bold uppercase`}>{statusText}</span>
-                            </div>
+                            <span className={`text-[10px] font-bold px-2 py-1 rounded capitalize ${statusColor}`}>
+                                {status}
+                            </span>
                         </div>
                     );
                 })}
@@ -160,4 +158,4 @@ const Wallet: React.FC<WalletProps> = ({ user, config }) => {
   );
 };
 
-export default Wallet;
+export default Wallet; 
